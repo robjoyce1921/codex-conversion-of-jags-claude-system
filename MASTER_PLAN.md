@@ -41,6 +41,7 @@ Complete the interrupted Claude-to-Codex conversion by fully reading `juanandres
 - 2026-02-14 01:45 - Added state-path fallback (`.codex` primary, `.codex-state` fallback) to keep deterministic state writes in restricted environments.
 - 2026-02-14 02:05 - Renamed `CLAUDE.md` to `CODEX.md`, renamed checksum lock to `.codex-md.sha256`, and updated script/documentation references.
 - 2026-02-14 02:07 - Moved `EXPLANATION.md` into `docs/EXPLANATION.md` and updated guide references.
+- 2026-02-14 02:20 - Collapsed `docs/EXPLANATION.md` and `docs/codex-conversion.md` into `docs/CODEX-CONVERSION-EXPLANATION.md`.
 
 ## Decisions
 

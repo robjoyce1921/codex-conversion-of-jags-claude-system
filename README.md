@@ -81,8 +81,7 @@ State files are written to `.codex/` by default, with automatic fallback to `.co
 - `agents/`: role specs for Planner, Implementer, Tester, Guardian
 - `.githooks/`: executable git hooks
 - `scripts/`: reusable guard and validation scripts
-- `docs/codex-conversion.md`: mapping from Claude-system to Codex-system
-- `docs/EXPLANATION.md`: workflow explanation, limitations, and usage guide
+- `docs/CODEX-CONVERSION-EXPLANATION.md`: mapping, explanation, limitations, and usage guide
 
 ## Overrides (Use Sparingly)
 
