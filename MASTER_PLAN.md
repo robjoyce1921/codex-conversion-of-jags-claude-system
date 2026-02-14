@@ -33,6 +33,7 @@ Complete the interrupted Claude-to-Codex conversion by fully reading `juanandres
 - 2026-02-14 00:40 - Added `scripts/run-cycle.sh` single orchestrator entrypoint and integrated Makefile/README usage.
 - 2026-02-14 00:42 - Re-validated with `run-cycle` smoke tests and full `make check`.
 - 2026-02-14 00:55 - Bootstrapped standalone git repo in this folder, created initial commits, and published to GitHub.
+- 2026-02-14 01:05 - Updated README attribution to explicitly credit J. A. Guerrero-Saade (JAGS) and the original claude-system repository.
 
 ## Decisions
 

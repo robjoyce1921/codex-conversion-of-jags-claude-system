@@ -8,6 +8,13 @@ This repository implements a Codex-native equivalent of JAGS's Claude Code syste
 - Command safety wrapper for risky git usage
 - Worktree-first branch isolation with `codex/` branch prefix
 
+## Attribution
+
+This codebase was adapted from the work of developer **J. A. Guerrero-Saade (JAGS)**.
+
+- X profile: `https://x.com/juanandres_gs`
+- Original repository: `https://github.com/juanandresgs/claude-system`
+
 ## Quick Start
 
 1. Initialize git (if needed): `git init`
