@@ -1,28 +1,57 @@
 # MASTER_PLAN
 
+## Original Intent
+
+Implement a Codex-equivalent research workflow that starts with an explicit user choice:
+
+1. `codex-only` research
+2. `multi-provider` cross-provider synthesis (OpenAI + Perplexity + Gemini)
+
+Also implement secrets-management capabilities needed to securely configure and validate access tokens for those three providers.
+
 ## Problem
 
-Complete the interrupted Claude-to-Codex conversion by fully reading `juanandresgs/claude-system` docs and ensuring this local Codex workflow matches the upstream intent (architecture, hooks, multi-agent behavior, and operational guardrails).
+The current Codex conversion includes a proposal gate and research sections, but it does not enforce a start-of-task research mode selection or provide first-class multi-provider orchestration with secure token lifecycle management.
 
 ## Constraints
 
-- Technical constraints: Network reads rely on authenticated `gh` calls and may require escalated execution in this environment.
-- Safety constraints: No destructive git commands; keep local changes isolated to this workspace.
-- Scope constraints: Keep updates targeted to parity gaps discovered from upstream docs.
+- Technical constraints: Shell-first implementation; provider APIs must be optional and fail clearly when tokens are absent.
+- Safety constraints: No destructive git commands; no secret material committed to git.
+- Scope constraints: Keep implementation focused on research mode orchestration, provider synthesis tooling, and secrets lifecycle.
+
+## Requirements
+
+- REQ-RES-001: User must choose research mode at cycle start (`codex-only` or `multi-provider`).
+- REQ-RES-002: Workflow state must persist research mode in `.codex/` (or fallback) and surface it in status/summary.
+- REQ-RES-003: Proposal quality gate must require explicit documentation of selected research mode.
+- REQ-RES-004: Multi-provider mode must support running OpenAI, Perplexity, and Gemini research queries and generate a synthesis artifact.
+- REQ-RES-005: Secrets management must provide secure local storage, set/unset/status operations, and provider-specific validation checks.
+- REQ-RES-006: Hooks/checks/docs must guide users through configuration and block invalid multi-provider execution early.
+
+## Success Metrics
+
+- MET-RES-001: `run-cycle` can set and report research mode deterministically.
+- MET-RES-002: Multi-provider run command can generate a synthesis report when keys are configured.
+- MET-RES-003: Missing/invalid secrets produce actionable errors before provider calls.
+- MET-RES-004: `make check` passes with new research and secrets gates.
 
 ## Plan
 
-1. Fetch and review all relevant upstream docs (`README.md`, `CODEX.md`, `docs/`, `hooks/`, `agents/`).
-2. Compare upstream behavior to current local Codex scaffold and identify mismatches.
-3. Implement parity fixes across docs/scripts/hooks with explicit rationale for non-obvious choices.
-4. Run `make check` and summarize findings, residual risks, and next actions.
+1. Planner: update docs/contracts (`MASTER_PLAN.md`, template/check expectations) to include research mode.
+2. Implementer: add research state scripts and `run-cycle` integration for mode selection at start.
+3. Implementer: add secrets manager (`init`, `set`, `unset`, `status`, `validate`) with non-committed local storage.
+4. Implementer: add multi-provider research runner and synthesis artifact generation.
+5. Implementer: wire Makefile/check scripts/docs (`README.md`, `AGENTS.md`, `ARCHITECTURE.md`, planner guidance, conversion explanation).
+6. Guardian: run syntax and gate checks; record residual risks and next steps.
 
 ## Acceptance Criteria
 
-- [ ] Upstream `docs/` content is reviewed and parity deltas are documented.
-- [ ] Local workflow behavior reflects upstream intent for plan-first, multi-agent flow, and safety/quality gates.
-- [ ] All local checks pass.
-- [ ] Final handoff includes mapping, remaining gaps, and recommended follow-ups.
+- [x] Research mode is explicitly chosen and persisted before proposal progression.
+- [x] Proposal template/checks require a research-mode section.
+- [x] Secrets manager supports OpenAI/Perplexity/Gemini token lifecycle operations.
+- [x] Multi-provider research run generates a synthesis report artifact.
+- [x] `.gitignore` protects local secret files.
+- [x] `make check` passes after changes.
 
 ## Progress Log
 
@@ -42,6 +71,21 @@ Complete the interrupted Claude-to-Codex conversion by fully reading `juanandres
 - 2026-02-14 02:05 - Renamed `CLAUDE.md` to `CODEX.md`, renamed checksum lock to `.codex-md.sha256`, and updated script/documentation references.
 - 2026-02-14 02:07 - Moved `EXPLANATION.md` into `docs/EXPLANATION.md` and updated guide references.
 - 2026-02-14 02:20 - Collapsed `docs/EXPLANATION.md` and `docs/codex-conversion.md` into `docs/CODEX-CONVERSION-EXPLANATION.md`.
+- 2026-02-14 02:35 - Added mandatory research-backed proposal phase with `PROPOSAL.md`, proposal quality checks, and explicit user approval gate before implementation.
+- 2026-02-14 02:40 - Extended run-cycle stage model with proposal stages and automated proposal review packet output for user review/feedback/approval.
+- 2026-02-14 09:58 - Planned research-mode expansion with multi-provider synthesis and secrets-management capabilities.
+- 2026-02-14 10:00 - Implemented research mode state scripts, run-cycle integration (`research-mode`, `research-run`), and session/status reporting.
+- 2026-02-14 10:01 - Added secrets lifecycle manager for OpenAI/PPLX/Gemini keys (`init`, `set`, `unset`, `status`, `validate`) with local ignored storage.
+- 2026-02-14 10:01 - Added provider runner to produce codex-only research briefs or multi-provider synthesis reports with raw artifact capture.
+- 2026-02-14 10:02 - Updated proposal quality/template/docs to require explicit research mode and provider coverage in multi-provider proposals.
+- 2026-02-14 10:03 - Verified via `bash -n` and `make check`; smoke-tested codex-only research run and multi-provider missing-secret failure path.
+
+## Architectural Decisions
+
+- DEC-RES-001: Enforce explicit research mode selection as a first-class workflow state at start. Addresses: REQ-RES-001, REQ-RES-002.
+- DEC-RES-002: Keep codex-only and multi-provider in one orchestrator by gating provider execution on persisted mode + key validation. Addresses: REQ-RES-001, REQ-RES-004, REQ-RES-006.
+- DEC-RES-003: Use local ignored env files with strict file permissions for token storage and script-based lifecycle management. Addresses: REQ-RES-005.
+- DEC-RES-004: Require proposal documentation of selected research mode to preserve traceability and review quality. Addresses: REQ-RES-003.
 
 ## Decisions
 
@@ -54,9 +98,14 @@ Complete the interrupted Claude-to-Codex conversion by fully reading `juanandres
 - DECISION: Capture plan traceability drift in `.codex/plan-drift` with optional strict enforcement (`STRICT_TRACEABILITY=1`).
 - DECISION: Use `.codex-state` as automatic fallback when `.codex` is not writable, preserving deterministic gate behavior.
 - DECISION: Preserve verbatim guidance content while renaming artifact filenames to Codex-native naming (`CODEX.md`, `.codex-md.sha256`).
+- DECISION: Block staged code commits unless proposal is both high-quality and explicitly approved (`proposal-status=approved`).
+- DECISION: Require robust proposal sections (problem decomposition, research findings, options/trade-offs, recommended architecture, phase plan, risks, evaluation plan) before entering implementation.
+- DECISION: Add research mode state and mandatory selection at workflow start so research execution path is deterministic.
+- DECISION: Implement multi-provider synthesis through provider adapters plus consolidated markdown artifact for proposal ingestion.
+- DECISION: Manage provider tokens through ignored local secrets files and explicit validation gates instead of committed config.
 
 ## Handoff
 
-- Verification performed: Shell syntax checks for all hook/script files; `make check` passed.
-- Residual risks: Codex still lacks native runtime PreToolUse/PostToolUse JSON hook events, so some lifecycle behaviors remain boundary-gated rather than per-tool-call gated.
-- Follow-up actions: Optional future enhancement is an automated Task-dispatch layer that writes/reads `.codex/stage-status` and `.codex/agent-findings` across dedicated agent sessions.
+- Verification performed: `bash -n scripts/*.sh .githooks/pre-commit .githooks/pre-push`; `make check`; `run-cycle` status/summary smoke; `run-research.sh` codex-only output generation; multi-provider key validation failure-path test.
+- Residual risks: Live multi-provider API success path is unverified in this environment because provider keys were intentionally not configured.
+- Follow-up actions: Optional enhancements include provider timeout/retry tuning, citation schema normalization, and a strict gate that requires a fresh research artifact before proposal approval.

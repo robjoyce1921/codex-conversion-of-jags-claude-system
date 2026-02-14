@@ -53,7 +53,11 @@ Reviewed upstream artifacts for this parity pass:
 
 11. State-file model
    - Claude: `.claude/.test-status`, `.proof-status`, `.session-changes`, `.agent-findings`, `.plan-drift`
-   - Codex: `.codex/test-status`, `.codex/proof-status`, `.codex/session-changes`, `.codex/agent-findings`, `.codex/plan-drift`, `.codex/stage-status` (fallback `.codex-state/*` when `.codex` is not writable)
+   - Codex: `.codex/test-status`, `.codex/proof-status`, `.codex/proposal-status`, `.codex/session-changes`, `.codex/agent-findings`, `.codex/plan-drift`, `.codex/stage-status` (fallback `.codex-state/*` when `.codex` is not writable)
+
+12. Research and proposal gate
+   - Claude: Planner has mandatory research gate and architecture trade-off workflow before implementation
+   - Codex: `PROPOSAL.md` + `scripts/check-proposal-quality.sh` + proposal approval status gate enforce research-backed proposal and user approval before implementation-stage progression
 
 ### Practical Usage Pattern
 
@@ -84,10 +88,11 @@ The workflow is built around role separation:
 Deterministic enforcement is provided by executable gates rather than prompt-only guidance:
 
 - `scripts/run-cycle.sh` enforces explicit stage progression
-  - `implementing -> testing-pending -> testing-verified -> guardian-ready`
+  - `proposal-draft -> proposal-pending -> proposal-approved -> implementing -> testing-pending -> testing-verified -> guardian-ready`
 - `.githooks/pre-commit` enforces policy before commit
   - plan presence and structure checks
   - immutable `CODEX.md` checksum lock
+  - proposal-quality and proposal-approval gate
   - file-count guard
   - decision-annotation guard
   - proof gate
@@ -128,6 +133,9 @@ This Codex version differs in important ways:
 5. Subagent lifecycle automation parity is partial  
    The original uses richer subagent lifecycle hooks; here, stage gates and `run-cycle` state transitions provide the equivalent control plane.
 
+6. Research tooling parity is adapted (not hook-native)  
+   Claude skills like `/deep-research` and `/last30days` are represented through explicit workflow commands: start-of-task research mode selection (`codex-only` vs `multi-provider`), provider-token management, and a multi-provider synthesis report generator (OpenAI + Perplexity + Gemini). This is command/state-driven rather than runtime hook-driven.
+
 The core architectural intent remains aligned: guidance + deterministic enforcement, role separation, worktree isolation, proof-before-permanent-operations, and plan/decision traceability.
 
 ## How to Develop Using This Approach with Codex
@@ -143,28 +151,41 @@ Use this workflow for every feature:
    - update `MASTER_PLAN.md` before implementation work
    - ensure requirements and decisions are explicit
 
-3. Start a feature cycle
+3. Select research mode and run research
+   - choose mode: `./scripts/run-cycle.sh research-mode codex-only|multi-provider`
+   - for multi-provider, configure tokens: `./scripts/research-secrets.sh init` then `set` for each provider key
+   - run research: `./scripts/run-cycle.sh research-run "<question>"`
+
+4. Build proposal and run review gate
+   - initialize: `./scripts/run-cycle.sh proposal-init`
+   - complete robust proposal in `PROPOSAL.md`
+   - present for review: `./scripts/run-cycle.sh proposal-pending`
+   - user decision:
+     - approved: `./scripts/run-cycle.sh proposal-approve`
+     - revisions: `./scripts/run-cycle.sh proposal-revise`
+
+5. Start a feature cycle
    - from main: `./scripts/run-cycle.sh next <feature-name>`
    - this creates a worktree and initializes stage flow
 
-4. Implement in the worktree
+6. Implement in the worktree
    - write code and tests incrementally
    - use decision annotations for non-obvious implementation choices
 
-5. Move to tester checkpoint
+7. Move to tester checkpoint
    - `./scripts/run-cycle.sh pending`
    - gather evidence and get user verification
    - `./scripts/run-cycle.sh verified`
 
-6. Gate all quality checks
+8. Gate all quality checks
    - `./scripts/run-cycle.sh ready`
    - or `make check`
 
-7. Use Guardian flow for permanent operations
+9. Use Guardian flow for permanent operations
    - commit and push only when stage is `guardian-ready`
    - hooks enforce policy and safety constraints
 
-8. Inspect status and summary at any point
+10. Inspect status and summary at any point
    - `./scripts/run-cycle.sh status`
    - `./scripts/run-cycle.sh summary`
 

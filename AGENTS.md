@@ -20,11 +20,13 @@ This repository uses a strict multi-agent workflow:
 1. Read `CODEX.md` verbatim.
 2. Read `ARCHITECTURE.md`.
 3. Read `MASTER_PLAN.md`
-4. Run Planner protocol from `agents/planner.md`
-5. Run Implementer protocol from `agents/implementer.md`
-6. Run Tester protocol from `agents/tester.md`
-7. Run Guardian protocol from `agents/guardian.md`
-8. Summarize findings, residual risks, and next steps
+4. Select research mode at task start (`codex-only` or `multi-provider`)
+5. Run Planner protocol from `agents/planner.md`
+6. Complete proposal review gate (`PROPOSAL.md`: pending -> approved or needs-revision)
+7. Run Implementer protocol from `agents/implementer.md`
+8. Run Tester protocol from `agents/tester.md`
+9. Run Guardian protocol from `agents/guardian.md`
+10. Summarize findings, residual risks, and next steps
 
 ## Shared Concepts
 
@@ -33,6 +35,7 @@ Use concepts from `ARCHITECTURE.md` consistently:
 - Sacred Practices
 - Worktree isolation
 - Proof-of-work before commit
+- Proposal review and approval before implementation
 - Phase boundaries and plan drift
 - State-file communication in `.codex/`
 

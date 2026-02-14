@@ -38,3 +38,13 @@ resolve_state_file_for_read() {
   echo "${primary}"
 }
 
+read_state_status() {
+  local rel="${1}"
+  local path
+  path="$(resolve_state_file_for_read "${rel}")"
+  if [[ ! -f "${path}" ]]; then
+    echo "missing|"
+    return 0
+  fi
+  cat "${path}"
+}

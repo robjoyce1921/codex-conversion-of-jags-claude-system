@@ -33,19 +33,32 @@ State files are written to `.codex/` by default, with automatic fallback to `.co
 1. Initialize git (if needed): `git init`
 2. Install hooks and permissions: `./scripts/install-hooks.sh`
 3. Start every task by updating `MASTER_PLAN.md`
-4. Use the single orchestrator command:
+4. Choose research mode at task start:
+   - codex-only: `./scripts/run-cycle.sh research-mode codex-only`
+   - multi-provider: `./scripts/run-cycle.sh research-mode multi-provider`
+5. (Multi-provider only) configure provider tokens:
+   - initialize local secrets file: `./scripts/research-secrets.sh init`
+   - set keys: `./scripts/research-secrets.sh set OPENAI_API_KEY`, `./scripts/research-secrets.sh set PPLX_API_KEY`, `./scripts/research-secrets.sh set GEMINI_API_KEY`
+   - validate: `./scripts/research-secrets.sh validate multi-provider`
+6. Use the single orchestrator command:
    - from `main`: `./scripts/run-cycle.sh next my-feature`
    - inside feature branch/worktree: `./scripts/run-cycle.sh next`
-5. Run work:
+7. Proposal gate (mandatory before implementation):
+   - initialize proposal: `./scripts/run-cycle.sh proposal-init`
+   - optionally run research: `./scripts/run-cycle.sh research-run "<research question>"`
+   - mark proposal ready for review: `./scripts/run-cycle.sh proposal-pending`
+   - after user approval: `./scripts/run-cycle.sh proposal-approve`
+   - if revisions requested: `./scripts/run-cycle.sh proposal-revise`
+8. Run work:
    - Planner guidance: `cat agents/planner.md`
    - Implementer guidance: `cat agents/implementer.md`
    - Tester guidance: `cat agents/tester.md`
    - Guardian guidance: `cat agents/guardian.md`
-6. Verification cycle:
+9. Verification cycle:
    - mark pending proof: `./scripts/run-cycle.sh pending`
    - after user verifies behavior: `./scripts/run-cycle.sh verified`
-7. Run checks: `./scripts/run-cycle.sh ready`
-8. Print session summary: `./scripts/run-cycle.sh summary`
+10. Run checks: `./scripts/run-cycle.sh ready`
+11. Print session summary: `./scripts/run-cycle.sh summary`
 
 ## Orchestrator Command
 
@@ -54,6 +67,12 @@ State files are written to `.codex/` by default, with automatic fallback to `.co
 - `next [feature-name]`: compute and execute the next step from current state
 - `status`: print state + recommended next command
 - `start <feature-name>`: validate plan and create worktree
+- `proposal-init`: scaffold `PROPOSAL.md` and enter proposal-draft stage
+- `proposal-pending`: validate proposal and present review packet for user decision
+- `proposal-approve`: record user approval and unlock implementation
+- `proposal-revise`: return to proposal drafting after user feedback
+- `research-mode <codex-only|multi-provider>`: record research mode for this feature cycle
+- `research-run "<question>" [output-file]`: execute codex-only brief generation or multi-provider synthesis
 - `pending`: set tester proof status to pending
 - `verified`: set proof status to verified
 - `ready`: run full quality gates (`make check`)
@@ -64,6 +83,8 @@ State files are written to `.codex/` by default, with automatic fallback to `.co
 - Block commits on `main`/`master` (unless explicitly overridden)
 - Require `MASTER_PLAN.md` and required headings
 - Require `CODEX.md` to match locked original wording
+- Require `PROPOSAL.md` quality and explicit proposal approval before staged code commits
+- Require explicit research mode selection and proposal alignment with that mode
 - Snapshot plan traceability and plan drift into `.codex/plan-drift`
 - Require `MASTER_PLAN.md` to be staged alongside code changes
 - Block commits touching more than 10 files (configurable with `MAX_FILES`)
@@ -78,6 +99,10 @@ State files are written to `.codex/` by default, with automatic fallback to `.co
 - `AGENTS.md`: Codex orchestration contract
 - `ARCHITECTURE.md`: system architecture, extension points, glossary
 - `MASTER_PLAN.md`: mandatory planning artifact
+- `PROPOSAL.md`: research-backed proposal artifact requiring user approval before implementation
+- `docs/PROPOSAL-TEMPLATE.md`: required structure for robust proposal development
+- `scripts/research-secrets.sh`: local token lifecycle (`init`, `set`, `unset`, `status`, `validate`)
+- `scripts/run-research.sh`: codex-only or OpenAI/Perplexity/Gemini research synthesis report generation
 - `agents/`: role specs for Planner, Implementer, Tester, Guardian
 - `.githooks/`: executable git hooks
 - `scripts/`: reusable guard and validation scripts
@@ -92,4 +117,5 @@ State files are written to `.codex/` by default, with automatic fallback to `.co
 - `MAX_FILES=10` (pre-commit file cap)
 - `ALLOW_UNVERIFIED_COMMIT=1` (pre-commit proof gate override)
 - `ALLOW_STAGE_BYPASS=1` (pre-commit stage gate override)
+- `ALLOW_UNAPPROVED_PROPOSAL_COMMIT=1` (pre-commit proposal gate override)
 - `STRICT_TRACEABILITY=1` (fail commit/check on plan traceability drift)

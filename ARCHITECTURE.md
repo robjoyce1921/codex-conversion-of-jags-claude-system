@@ -51,11 +51,14 @@ Codex orchestration contract (AGENTS.md)
 ## 2. Data Flow: End-to-End
 
 1. Planner updates `MASTER_PLAN.md`.
-2. Guardian/bootstrap creates a worktree (`scripts/create-worktree.sh`).
-3. Implementer develops and runs tests.
-4. Tester marks proof `pending` and then `verified` after user confirmation.
-5. Orchestrator marks stage `guardian-ready`.
-6. Guardian commits/pushes through hook gates.
+2. Guardian/bootstrap creates feature workspace context (`scripts/create-worktree.sh`) and proposal draft stage.
+3. Planner creates a robust `PROPOSAL.md` and marks proposal `pending`.
+4. User reviews proposal and either requests revision or approves.
+5. Proposal approval unlocks implementation stage.
+6. Implementer develops and runs tests.
+7. Tester marks proof `pending` and then `verified` after user confirmation.
+8. Orchestrator marks stage `guardian-ready`.
+9. Guardian commits/pushes through hook gates.
 
 ---
 
@@ -76,7 +79,9 @@ All state files are stored under `.codex/`:
 
 - `.codex/test-status` (`pass|fail|pending|count|epoch`)
 - `.codex/proof-status` (`verified|pending|epoch`)
-- `.codex/stage-status` (`planned|implementing|testing-pending|testing-verified|guardian-ready|epoch`)
+- `.codex/proposal-status` (`draft|pending|approved|needs-revision|epoch`)
+- `.codex/research-mode` (`codex-only|multi-provider|epoch`)
+- `.codex/stage-status` (`planned|proposal-draft|proposal-pending|proposal-approved|implementing|testing-pending|testing-verified|guardian-ready|epoch`)
 - `.codex/session-changes` (current git working/staged file lists)
 - `.codex/agent-findings` (latest gate findings and blockers)
 - `.codex/plan-drift` (traceability/drift snapshot)
@@ -91,13 +96,19 @@ If `.codex/` is not writable in the current execution environment, scripts autom
 `CODEX.md` is copied verbatim from upstream and guarded by SHA-256 (`.codex-md.sha256`).
 
 ### DEC-ARCH-003: Stage-gated orchestration
-`run-cycle.sh` plus `check-stage-gate.sh` enforce Planner -> Implementer -> Tester -> Guardian sequencing.
+`run-cycle.sh` plus proposal/stage gates enforce Planner -> Proposal Review -> Implementer -> Tester -> Guardian sequencing.
 
 ### DEC-ARCH-004: State-file first coordination
 Cross-step coordination uses `.codex/*` state files so checks remain deterministic and auditable.
 
 ### DEC-ARCH-005: Traceability drift capture
 `check-plan-traceability.sh` writes `.codex/plan-drift` to capture REQ/DEC linkage quality and drift signals.
+
+### DEC-ARCH-006: Explicit research-mode fork
+The workflow records research mode at task start and uses it to choose either Codex-only research or multi-provider synthesis.
+
+### DEC-ARCH-007: Local secrets lifecycle for provider tokens
+Provider tokens are managed via local ignored env files with script-driven set/unset/status/validate controls.
 
 ---
 
@@ -129,6 +140,7 @@ Cross-step coordination uses `.codex/*` state files so checks remain determinist
 - Relying on instructions alone without mechanical checks
 - Working directly on `main`
 - Skipping proof collection before commit
+- Skipping proposal review/approval before implementation
 - Skipping plan updates when code changes
 - Tracking workflow state only in memory
 - Treating plan/code drift as acceptable without explicit rationale
@@ -148,6 +160,15 @@ Inline rationale marker linking code choices to plan intent.
 
 **Proof-of-work**  
 Verification checkpoint requiring observable evidence before commit.
+
+**Proposal Review Gate**  
+Mandatory user decision point after first proposal development: approve to proceed or request revision.
+
+**Research Mode**  
+Explicit choice between `codex-only` and `multi-provider` that determines research execution behavior.
+
+**Cross-Provider Synthesis**  
+Structured aggregation and reconciliation of OpenAI, Perplexity, and Gemini outputs into a single proposal-ingestion artifact.
 
 **Test status gate**  
 Mechanism requiring current test status before permanent operations.

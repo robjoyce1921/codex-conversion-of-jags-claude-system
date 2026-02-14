@@ -2,3 +2,5 @@
 .codex-state/
 .worktrees/
 .DS_Store
+research/
+*.local.env
