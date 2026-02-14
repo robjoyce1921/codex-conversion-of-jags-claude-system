@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-file="CLAUDE.md"
-checksum_file=".claude-md.sha256"
+file="CODEX.md"
+checksum_file=".codex-md.sha256"
 
 if [[ ! -f "${file}" ]]; then
   echo "ERROR: ${file} is required."
@@ -24,4 +24,3 @@ if [[ "${actual}" != "${expected}" ]]; then
 fi
 
 echo "OK: ${file} matches locked original guidance"
-

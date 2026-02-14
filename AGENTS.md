@@ -17,7 +17,7 @@ This repository uses a strict multi-agent workflow:
 
 ## Required Flow
 
-1. Read `CLAUDE.md` verbatim.
+1. Read `CODEX.md` verbatim.
 2. Read `ARCHITECTURE.md`.
 3. Read `MASTER_PLAN.md`
 4. Run Planner protocol from `agents/planner.md`

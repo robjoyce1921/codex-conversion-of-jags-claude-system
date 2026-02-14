@@ -15,7 +15,7 @@ This codebase was adapted from the work of developer **J. A. Guerrero-Saade (JAG
 - X profile: `https://x.com/juanandres_gs`
 - Original repository: `https://github.com/juanandresgs/claude-system`
 
-`CLAUDE.md` in this repository is copied verbatim from the original and locked by checksum (`.claude-md.sha256`).
+`CODEX.md` in this repository is copied verbatim from the original and locked by checksum (`.codex-md.sha256`).
 
 ## Architecture Alignment
 
@@ -63,7 +63,7 @@ State files are written to `.codex/` by default, with automatic fallback to `.co
 
 - Block commits on `main`/`master` (unless explicitly overridden)
 - Require `MASTER_PLAN.md` and required headings
-- Require `CLAUDE.md` to match locked original wording
+- Require `CODEX.md` to match locked original wording
 - Snapshot plan traceability and plan drift into `.codex/plan-drift`
 - Require `MASTER_PLAN.md` to be staged alongside code changes
 - Block commits touching more than 10 files (configurable with `MAX_FILES`)
@@ -82,6 +82,7 @@ State files are written to `.codex/` by default, with automatic fallback to `.co
 - `.githooks/`: executable git hooks
 - `scripts/`: reusable guard and validation scripts
 - `docs/codex-conversion.md`: mapping from Claude-system to Codex-system
+- `docs/EXPLANATION.md`: workflow explanation, limitations, and usage guide
 
 ## Overrides (Use Sparingly)
 

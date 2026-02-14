@@ -22,7 +22,7 @@ This repository is a Codex-native implementation of JAGS's process architecture:
 User request
    |
    v
-CLAUDE.md (verbatim, locked)
+CODEX.md (verbatim, locked)
    |
    v
 Codex orchestration contract (AGENTS.md)
@@ -88,7 +88,7 @@ If `.codex/` is not writable in the current execution environment, scripts autom
 ## 5. Key Design Decisions
 
 ### DEC-ARCH-002: Verbatim guidance lock
-`CLAUDE.md` is copied verbatim from upstream and guarded by SHA-256 (`.claude-md.sha256`).
+`CODEX.md` is copied verbatim from upstream and guarded by SHA-256 (`.codex-md.sha256`).
 
 ### DEC-ARCH-003: Stage-gated orchestration
 `run-cycle.sh` plus `check-stage-gate.sh` enforce Planner -> Implementer -> Tester -> Guardian sequencing.

@@ -17,7 +17,7 @@ Deterministic enforcement is provided by executable gates rather than prompt-onl
   - `implementing -> testing-pending -> testing-verified -> guardian-ready`
 - `.githooks/pre-commit` enforces policy before commit
   - plan presence and structure checks
-  - immutable `CLAUDE.md` checksum lock
+  - immutable `CODEX.md` checksum lock
   - file-count guard
   - decision-annotation guard
   - proof gate
@@ -65,7 +65,7 @@ The core architectural intent remains aligned: guidance + deterministic enforcem
 Use this workflow for every feature:
 
 1. Read guidance artifacts
-   - `CLAUDE.md` (verbatim locked)
+   - `CODEX.md` (verbatim locked)
    - `ARCHITECTURE.md`
    - `MASTER_PLAN.md`
 

@@ -1,15 +1,15 @@
-.PHONY: install-hooks check check-plan check-claude check-traceability check-files check-decisions check-proof check-stage check-tests session-summary proof-pending proof-verified worktree cycle cycle-status cycle-ready cycle-summary
+.PHONY: install-hooks check check-plan check-codex check-traceability check-files check-decisions check-proof check-stage check-tests session-summary proof-pending proof-verified worktree cycle cycle-status cycle-ready cycle-summary
 
 install-hooks:
 	./scripts/install-hooks.sh
 
-check: check-plan check-claude check-traceability check-files check-decisions check-proof check-stage check-tests
+check: check-plan check-codex check-traceability check-files check-decisions check-proof check-stage check-tests
 
 check-plan:
 	./scripts/check-master-plan.sh
 
-check-claude:
-	./scripts/check-claude-guidance-verbatim.sh
+check-codex:
+	./scripts/check-codex-guidance-verbatim.sh
 
 check-traceability:
 	./scripts/check-plan-traceability.sh

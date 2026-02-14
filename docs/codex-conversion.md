@@ -1,7 +1,7 @@
 # Claude-System -> Codex-System Mapping
 
 Reviewed upstream artifacts for this parity pass:
-- `README.md`, `CLAUDE.md`, `ARCHITECTURE.md`
+- `README.md`, `CODEX.md`, `ARCHITECTURE.md`
 - `docs/context-management-sota-2026.md`
 - `docs/team-walkthrough-presentation.md`
 - `hooks/HOOKS.md`
