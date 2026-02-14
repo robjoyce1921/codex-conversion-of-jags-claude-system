@@ -34,6 +34,11 @@ Complete the interrupted Claude-to-Codex conversion by fully reading `juanandres
 - 2026-02-14 00:42 - Re-validated with `run-cycle` smoke tests and full `make check`.
 - 2026-02-14 00:55 - Bootstrapped standalone git repo in this folder, created initial commits, and published to GitHub.
 - 2026-02-14 01:05 - Updated README attribution to explicitly credit J. A. Guerrero-Saade (JAGS) and the original claude-system repository.
+- 2026-02-14 01:15 - Imported upstream JAGS `CLAUDE.md` verbatim and added checksum-based guard to prevent wording drift.
+- 2026-02-14 01:30 - Added `ARCHITECTURE.md` for Codex alignment carrying original system concepts, anti-patterns, and glossary direction.
+- 2026-02-14 01:35 - Added `.codex` state protocol scripts (`test-status`, `session-changes`, `agent-findings`, `plan-drift`, `stage-status`) and wired them to checks/hooks.
+- 2026-02-14 01:40 - Upgraded `run-cycle.sh` to explicit stage-machine gating (implementing -> testing-pending -> testing-verified -> guardian-ready) with deterministic summary output.
+- 2026-02-14 01:45 - Added state-path fallback (`.codex` primary, `.codex-state` fallback) to keep deterministic state writes in restricted environments.
 
 ## Decisions
 
@@ -41,9 +46,13 @@ Complete the interrupted Claude-to-Codex conversion by fully reading `juanandres
 - DECISION: Add commit-time proof gate tied to `.codex/proof-status` to emulate upstream proof-before-commit enforcement.
 - DECISION: Add a dedicated tester role to preserve separation between implementation and verification.
 - DECISION: Implement orchestration as a state-machine command (`run-cycle.sh`) that computes the next step from branch/proof/plan state.
+- DECISION: Treat `CLAUDE.md` as immutable guidance text by enforcing SHA-256 verification in pre-commit and `make check`.
+- DECISION: Add architecture-level parity by codifying state-file lifecycle and glossary concepts in `ARCHITECTURE.md` plus executable gates.
+- DECISION: Capture plan traceability drift in `.codex/plan-drift` with optional strict enforcement (`STRICT_TRACEABILITY=1`).
+- DECISION: Use `.codex-state` as automatic fallback when `.codex` is not writable, preserving deterministic gate behavior.
 
 ## Handoff
 
 - Verification performed: Shell syntax checks for all hook/script files; `make check` passed.
-- Residual risks: Codex lacks native Claude-style runtime tool-event hooks, so enforcement remains strongest at commit/push boundaries.
-- Follow-up actions: Optional future enhancement is `run-cycle` integration with Task delegation so it can spawn dedicated Planner/Implementer/Tester/Guardian sessions automatically.
+- Residual risks: Codex still lacks native runtime PreToolUse/PostToolUse JSON hook events, so some lifecycle behaviors remain boundary-gated rather than per-tool-call gated.
+- Follow-up actions: Optional future enhancement is an automated Task-dispatch layer that writes/reads `.codex/stage-status` and `.codex/agent-findings` across dedicated agent sessions.

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+source "$(dirname "$0")/state-path.sh"
+
 plan_file="${1:-MASTER_PLAN.md}"
 
 if [[ ! -f "${plan_file}" ]]; then
@@ -25,6 +27,30 @@ for header in "${required_headers[@]}"; do
   fi
 done
 
+recommended_headers=(
+  "## Original Intent"
+  "## Requirements"
+  "## Success Metrics"
+  "## Architectural Decisions"
+)
+
+missing_recommended=()
+for header in "${recommended_headers[@]}"; do
+  if ! grep -Fqx "${header}" "${plan_file}"; then
+    missing_recommended+=("${header}")
+  fi
+done
+
+if [[ "${#missing_recommended[@]}" -gt 0 ]]; then
+  dir="$(state_dir_writable)"
+  {
+    echo "plan-structure|missing recommended headings|$(date +%s)"
+    printf 'missing|%s\n' "${missing_recommended[@]}"
+  } > "${dir}/agent-findings"
+  echo "WARN: recommended plan headings missing:"
+  printf '  - %s\n' "${missing_recommended[@]}"
+fi
+
 if git rev-parse --git-dir >/dev/null 2>&1; then
   staged_files="$(git diff --cached --name-only)"
   if [[ -n "${staged_files}" ]]; then
@@ -38,4 +64,3 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
 fi
 
 echo "OK: ${plan_file} validated"
-

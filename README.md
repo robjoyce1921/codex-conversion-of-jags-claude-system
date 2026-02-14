@@ -15,6 +15,19 @@ This codebase was adapted from the work of developer **J. A. Guerrero-Saade (JAG
 - X profile: `https://x.com/juanandres_gs`
 - Original repository: `https://github.com/juanandresgs/claude-system`
 
+`CLAUDE.md` in this repository is copied verbatim from the original and locked by checksum (`.claude-md.sha256`).
+
+## Architecture Alignment
+
+See `ARCHITECTURE.md` for the full Codex-mapped architecture model, including:
+
+- system overview and flow
+- state-file protocol in `.codex/`
+- design decisions and extension points
+- anti-patterns and glossary
+
+State files are written to `.codex/` by default, with automatic fallback to `.codex-state/` if needed.
+
 ## Quick Start
 
 1. Initialize git (if needed): `git init`
@@ -32,6 +45,7 @@ This codebase was adapted from the work of developer **J. A. Guerrero-Saade (JAG
    - mark pending proof: `./scripts/run-cycle.sh pending`
    - after user verifies behavior: `./scripts/run-cycle.sh verified`
 7. Run checks: `./scripts/run-cycle.sh ready`
+8. Print session summary: `./scripts/run-cycle.sh summary`
 
 ## Orchestrator Command
 
@@ -43,21 +57,26 @@ This codebase was adapted from the work of developer **J. A. Guerrero-Saade (JAG
 - `pending`: set tester proof status to pending
 - `verified`: set proof status to verified
 - `ready`: run full quality gates (`make check`)
+- `summary`: print deterministic workflow/session summary from state files
 
 ## Guardrails Enforced by Hooks
 
 - Block commits on `main`/`master` (unless explicitly overridden)
 - Require `MASTER_PLAN.md` and required headings
+- Require `CLAUDE.md` to match locked original wording
+- Snapshot plan traceability and plan drift into `.codex/plan-drift`
 - Require `MASTER_PLAN.md` to be staged alongside code changes
 - Block commits touching more than 10 files (configurable with `MAX_FILES`)
 - Require decision annotations for larger code edits
 - Require proof status `verified` before committing staged code changes
+- Require stage `guardian-ready` before committing staged code changes
 - Block non-fast-forward pushes (force-like pushes)
 - Block pushes to protected branches by default
 
 ## Files
 
 - `AGENTS.md`: Codex orchestration contract
+- `ARCHITECTURE.md`: system architecture, extension points, glossary
 - `MASTER_PLAN.md`: mandatory planning artifact
 - `agents/`: role specs for Planner, Implementer, Tester, Guardian
 - `.githooks/`: executable git hooks
@@ -72,3 +91,5 @@ This codebase was adapted from the work of developer **J. A. Guerrero-Saade (JAG
 - `SKIP_TESTS=1` (checks)
 - `MAX_FILES=10` (pre-commit file cap)
 - `ALLOW_UNVERIFIED_COMMIT=1` (pre-commit proof gate override)
+- `ALLOW_STAGE_BYPASS=1` (pre-commit stage gate override)
+- `STRICT_TRACEABILITY=1` (fail commit/check on plan traceability drift)

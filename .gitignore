@@ -1,3 +1,4 @@
 .codex/
+.codex-state/
 .worktrees/
 .DS_Store

@@ -45,6 +45,14 @@ Reviewed upstream artifacts for this parity pass:
    - Claude: runtime orchestrator delegates phases with lifecycle hooks
    - Codex: `scripts/run-cycle.sh` provides a deterministic state-machine entrypoint (`next/start/pending/verified/ready/status`)
 
+10. Architecture-level alignment
+   - Claude: `ARCHITECTURE.md` defines flow, state files, anti-patterns, glossary
+   - Codex: `ARCHITECTURE.md` now defines equivalent concepts and maps them to commit/push/check orchestration
+
+11. State-file model
+   - Claude: `.claude/.test-status`, `.proof-status`, `.session-changes`, `.agent-findings`, `.plan-drift`
+   - Codex: `.codex/test-status`, `.codex/proof-status`, `.codex/session-changes`, `.codex/agent-findings`, `.codex/plan-drift`, `.codex/stage-status` (fallback `.codex-state/*` when `.codex` is not writable)
+
 ## Practical Usage Pattern
 
 1. Update `MASTER_PLAN.md`

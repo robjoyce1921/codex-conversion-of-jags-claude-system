@@ -17,12 +17,24 @@ This repository uses a strict multi-agent workflow:
 
 ## Required Flow
 
-1. Read `MASTER_PLAN.md`
-2. Run Planner protocol from `agents/planner.md`
-3. Run Implementer protocol from `agents/implementer.md`
-4. Run Tester protocol from `agents/tester.md`
-5. Run Guardian protocol from `agents/guardian.md`
-6. Summarize findings, residual risks, and next steps
+1. Read `CLAUDE.md` verbatim.
+2. Read `ARCHITECTURE.md`.
+3. Read `MASTER_PLAN.md`
+4. Run Planner protocol from `agents/planner.md`
+5. Run Implementer protocol from `agents/implementer.md`
+6. Run Tester protocol from `agents/tester.md`
+7. Run Guardian protocol from `agents/guardian.md`
+8. Summarize findings, residual risks, and next steps
+
+## Shared Concepts
+
+Use concepts from `ARCHITECTURE.md` consistently:
+
+- Sacred Practices
+- Worktree isolation
+- Proof-of-work before commit
+- Phase boundaries and plan drift
+- State-file communication in `.codex/`
 
 ## Codex Delegation Guidance
 
