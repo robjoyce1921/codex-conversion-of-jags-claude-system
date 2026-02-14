@@ -31,7 +31,7 @@ sanitize_name() {
 }
 
 branch_name() {
-  git rev-parse --abbrev-ref HEAD
+  git symbolic-ref --quiet --short HEAD 2>/dev/null || echo main
 }
 
 read_proof_status() {
@@ -174,4 +174,3 @@ case "${cmd}" in
     exit 1
     ;;
 esac
-

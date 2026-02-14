@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-branch="$(git rev-parse --abbrev-ref HEAD)"
+branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null || echo main)"
 if [[ "${branch}" =~ ^(main|master)$ ]] && [[ "${ALLOW_MAIN_COMMIT:-0}" != "1" ]]; then
   echo "ERROR: Direct commits to ${branch} are blocked by policy."
   echo "Use a feature branch or set ALLOW_MAIN_COMMIT=1 for explicit override."

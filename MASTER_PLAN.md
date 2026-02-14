@@ -32,6 +32,7 @@ Complete the interrupted Claude-to-Codex conversion by fully reading `juanandres
 - 2026-02-14 00:27 - Ran local validation (`bash -n` on hooks/scripts and `make check`) with passing results.
 - 2026-02-14 00:40 - Added `scripts/run-cycle.sh` single orchestrator entrypoint and integrated Makefile/README usage.
 - 2026-02-14 00:42 - Re-validated with `run-cycle` smoke tests and full `make check`.
+- 2026-02-14 00:55 - Bootstrapped standalone git repo in this folder, created initial commits, and published to GitHub.
 
 ## Decisions
 
