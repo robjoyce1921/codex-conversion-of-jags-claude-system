@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+if [[ "${branch}" =~ ^(main|master)$ ]] && [[ "${ALLOW_MAIN_COMMIT:-0}" != "1" ]]; then
+  echo "ERROR: Direct commits to ${branch} are blocked by policy."
+  echo "Use a feature branch or set ALLOW_MAIN_COMMIT=1 for explicit override."
+  exit 1
+fi
+
+./scripts/check-master-plan.sh
+./scripts/check-changed-file-count.sh
+./scripts/check-decision-annotations.sh
+./scripts/check-proof-status.sh
+./scripts/check-tests.sh
+
+echo "pre-commit checks passed"

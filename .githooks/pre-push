@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+./scripts/check-push-safety.sh "$@"
+./scripts/check-tests.sh
+
+echo "pre-push checks passed"
+
